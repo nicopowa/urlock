@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>urlock</title>
+
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<meta
+			name="viewport"
+			content="initial-scale=1, user-scalable=no, maximum-scale=1, width=device-width, height=device-height"
+		/>
+
+		<link rel="stylesheet" href="css/urlock.package.min.css" />
+
+		<script src="js/polybase64.js"></script>
+		<script src="js/urlock.package.release.min.js"></script>
+	</head>
+
+	<body>
+		<main id="wrp">
+			<header>
+				<a href="https://github.com/nicopowa/urlock" target="_blank"
+					>urlock</a
+				>
+				<label id="lbl" for="fin">browse</label>
+				<input type="file" id="fin" />
+			</header>
+			<textarea
+				id="txt"
+				placeholder="type text or drop file"
+				required
+			></textarea>
+			<div id="box">
+				<div id="nfo"></div>
+				<button id="act">Action</button>
+			</div>
+			<div id="row">
+				<input
+					id="pwd"
+					type="text"
+					placeholder="password"
+					required
+					autocapitalize="off"
+					autocomplete="off"
+				/>
+				<button id="btn">Encrypt</button>
+			</div>
+		</main>
+	</body>
+</html>
