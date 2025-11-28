@@ -21,6 +21,14 @@ class URLock {
 			{}
 		);
 
+		this.b64 = {
+			alphabet: "base64url"
+		};
+
+		this.blb = {
+			type: "text/plain"
+		};
+
 		this.timed = 0;
         
 		this.bin = null;
@@ -48,7 +56,7 @@ class URLock {
 			this.ui.fin.addEventListener(
 				"change",
 				e =>
-					e.target.files[0] && this.load(e.target.files[0])
+					e.target.files[0] && this.loadFile(e.target.files[0])
 			);
             
 			document.body.addEventListener(
@@ -68,7 +76,7 @@ class URLock {
 					e.preventDefault();
  
 					if(e.dataTransfer.files[0])
-						this.load(e.dataTransfer.files[0]);
+						this.loadFile(e.dataTransfer.files[0]);
 				
 				}
 			);
@@ -84,7 +92,7 @@ class URLock {
 	
 	}
 
-	load(f) {
+	loadFile(f) {
 
 		const rdr = new FileReader();
 
@@ -111,7 +119,7 @@ class URLock {
 
 		this.ui.nfo.innerText = `${this.bin.nnm}\n${s > 1048576 ? (s / 1048576).toFixed(2) + "MB" : (s / 1024).toFixed(2) + "KB"}`;
         
-		this.ui.act.innerText = this.dec ? "Save" : "Clear";
+		this.ui.act.innerText = this.dec ? "save" : "clear";
         
 		this.ui.act.onclick = this.dec ? () => {
 
@@ -168,9 +176,7 @@ class URLock {
 				// Decrypt
 				const bytes = Uint8Array.fromBase64(
 					hsh,
-					{
-						alphabet: "base64url"
-					}
+					this.b64
 				);
 				const slt = bytes.slice(
 					0,
@@ -182,7 +188,7 @@ class URLock {
 				);
 				const enc = bytes.slice(28);
 
-				const key = await this.deriveKey(
+				const key = await this.derive(
 					pwd,
 					slt
 				);
@@ -244,10 +250,12 @@ class URLock {
 					.encode(`\0F\0${this.bin.nnm}\n`);
 
 					dat = new Uint8Array(hds.length + this.bin.dat.length);
+
 					dat.set(
 						hds,
 						0
 					);
+
 					dat.set(
 						this.bin.dat,
 						hds.length
@@ -269,7 +277,7 @@ class URLock {
 						dat,
 						CompressionStream
 					),
-					this.deriveKey(
+					this.derive(
 						pwd,
 						slt
 					)
@@ -300,19 +308,15 @@ class URLock {
 						28
 					);
 
-					return `${location.origin}${location.pathname}#${pck.toBase64({
-						alphabet: "base64url"
-					})}`;
+					return `${location.origin}${location.pathname}#${pck.toBase64(this.b64)}`;
 			
 				});
 				
 				await navigator.clipboard.write([new ClipboardItem({
-					"text/plain": prm.then(u =>
+					[this.blb.type]: prm.then(u =>
 						new Blob(
 							[u],
-							{
-								type: "text/plain"
-							}
+							this.blb
 						))
 				})]);
 
@@ -332,13 +336,13 @@ class URLock {
 	
 	}
 
-	async deriveKey(pwd, slt) {
+	async derive(pwd, slt) {
 
 		return crypto.subtle.deriveKey(
 			{
 				name: "PBKDF2",
 				salt: slt,
-				iterations: 128000,
+				iterations: 256000,
 				hash: "SHA-256"
 			},
 			await crypto.subtle.importKey(
@@ -353,7 +357,7 @@ class URLock {
 				name: "AES-GCM",
 				length: 256
 			},
-			true,
+			false,
 			["encrypt", "decrypt"]
 		);
 	
