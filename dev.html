@@ -27,12 +27,15 @@
 	<body>
 		<main id="wrp">
 			<header>
-				<a href="https://github.com/nicopowa/urlock" target="_blank"
-					>urlock</a
-				>
+				<div id="urlock">urlock</div>
+				<a href="https://github.com/nicopowa/urlock" target="_blank">
+					<div id="git"></div>
+				</a>
+				<div id="spc"></div>
 				<label id="lbl" for="fin">browse</label>
 				<input type="file" id="fin" />
 			</header>
+			<input id="ttl" type="text" placeholder="title (not encrypted)" />
 			<textarea
 				id="txt"
 				placeholder="type text or drop file"
@@ -40,7 +43,7 @@
 			></textarea>
 			<div id="box">
 				<div id="nfo"></div>
-				<button id="act">Action</button>
+				<button id="act"></button>
 			</div>
 			<div id="row">
 				<input
@@ -51,7 +54,7 @@
 					autocapitalize="off"
 					autocomplete="off"
 				/>
-				<button id="btn">Encrypt</button>
+				<button id="btn"></button>
 			</div>
 		</main>
 	</body>

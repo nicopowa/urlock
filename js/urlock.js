@@ -7,6 +7,7 @@ class URLock {
 			row: "row",
 			pwd: "pwd",
 			btn: "btn",
+			ttl: "ttl",
 			txt: "txt",
 			nfo: "nfo",
 			act: "act",
@@ -31,62 +32,61 @@ class URLock {
 
 		this.timed = 0;
         
+		this.dat = "";
 		this.bin = null;
-		this.dec = !!location.hash.replace(
+
+		const hsh = location.hash.replace(
 			/^#/,
 			""
 		);
+
+		this.dec = !!hsh;
         
 		this.ui.wrp.className = this.dec ? "dec" : "enc";
-		this.ui.btn.innerText = this.dec ? "decrypt" : "encrypt";
+		this.ui.btn.innerText = this.dec ? "unlock" : "share";
 
-		this.ui.btn.addEventListener(
-			"click",
-			() =>
-				this.run()
-		);
+		this.ui.btn.onclick = () =>
+			this.run();
+
+		// passive
 		this.ui.pwd.addEventListener(
 			"keydown",
 			e =>
 				e.key === "Enter" && this.run()
 		);
 
-		if(!this.dec) {
+		if(this.dec) {
 
-			this.ui.fin.addEventListener(
-				"change",
-				e =>
-					e.target.files[0] && this.loadFile(e.target.files[0])
-			);
-            
-			document.body.addEventListener(
-				"dragover",
-				e => {
- 
-					e.preventDefault();
-					e.dataTransfer.dropEffect = "copy";
-				
-				}
-			);
-            
-			document.body.addEventListener(
-				"drop",
-				e => {
- 
-					e.preventDefault();
- 
-					if(e.dataTransfer.files[0])
-						this.loadFile(e.dataTransfer.files[0]);
-				
-				}
-			);
+			const spl = hsh.split(/\||%7C/);
 
-			this.ui.txt.focus();
+			if(spl.length > 1)
+				this.ui.ttl.value = decodeURIComponent(spl.shift());
+			
+			this.ui.ttl.disabled = true;
+
+			this.dat = spl[0];
+			
+			this.ui.pwd.focus();
 		
 		}
 		else {
 
-			this.ui.pwd.focus();
+			this.ui.fin.onchange = e =>
+				e.target.files[0] && this.loadFile(e.target.files[0]);
+            
+			document.body.ondragover = e =>
+				e.preventDefault();
+            
+			document.body.ondrop = e => {
+ 
+				e.preventDefault();
+
+				if(e.dataTransfer.files[0])
+					this.loadFile(e.dataTransfer.files[0]);
+				
+			};
+
+			this.ui.txt.focus();
 		
 		}
 	
@@ -100,7 +100,8 @@ class URLock {
 
 			this.bin = {
 				nnm: f.name,
-				dat: new Uint8Array(e.target.result),
+				//dat: new Uint8Array(e.target.result),
+				dat: new Uint8Array(rdr.result),
 				siz: f.size
 			};
 
@@ -119,7 +120,7 @@ class URLock {
 
 		this.ui.nfo.innerText = `${this.bin.nnm}\n${s > 1048576 ? (s / 1048576).toFixed(2) + "MB" : (s / 1024).toFixed(2) + "KB"}`;
         
-		this.ui.act.innerText = this.dec ? "save" : "clear";
+		this.ui.act.innerText = this.dec ? "download" : "clear";
         
 		this.ui.act.onclick = this.dec ? () => {
 
@@ -157,17 +158,10 @@ class URLock {
 
 	async run() {
 
-		if(!this.dec && !this.bin && !this.ui.txt.reportValidity())
-			return;
-
-		if(!this.ui.pwd.reportValidity())
+		if((!this.dec && !this.bin && !this.ui.txt.reportValidity()) || !this.ui.pwd.reportValidity())
 			return;
 
 		const pwd = this.ui.pwd.value;
-		const hsh = location.hash.replace(
-			/^#/,
-			""
-		);
         
 		try {
 
@@ -175,7 +169,7 @@ class URLock {
 
 				// Decrypt
 				const bytes = Uint8Array.fromBase64(
-					hsh,
+					this.dat,
 					this.b64
 				);
 				const slt = bytes.slice(
@@ -235,7 +229,6 @@ class URLock {
 
 				this.ui.wrp.classList.add("res");
 
-				location.hash = "";
 				this.ui.pwd.value = "";
 
 			}
@@ -308,21 +301,39 @@ class URLock {
 						28
 					);
 
-					return `${location.origin}${location.pathname}#${pck.toBase64(this.b64)}`;
+					return `${location.origin}${location.pathname}#${encodeURIComponent(this.ui.ttl.value)}|${pck.toBase64(this.b64)}`;
 			
 				});
-				
-				await navigator.clipboard.write([new ClipboardItem({
-					[this.blb.type]: prm.then(u =>
-						new Blob(
-							[u],
-							this.blb
-						))
-				})]);
 
-				await prm;
+				if(navigator.share) {
+
+					const dsc = this.ui.ttl.value || "URLock";
+
+					await navigator
+					.share({
+						title: dsc,
+						//text: dsc,
+						url: await prm
+					});
+
+					this.info("shared");
+
+				}
+				else {
+
+					await navigator.clipboard.write([new ClipboardItem({
+						[this.blb.type]: prm.then(u =>
+							new Blob(
+								[u],
+								this.blb
+							))
+					})]);
+
+					await prm;
                 
-				this.info("copied");
+					this.info("copied");
+					
+				}
 			
 			}
 		
@@ -371,5 +382,6 @@ class URLock {
 	}
 
 }
+
 window.onload = () =>
 	new URLock();

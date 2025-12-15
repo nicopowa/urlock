@@ -6,6 +6,7 @@
 - Nothing is ever sent to server
 - Password not stored anywhere
 - Lightweight : 5KB JS + 1.5KB CSS
+- 500KB url hash maximum size (?)
 
 [DEMO](https://nicopowa.github.io/urlock)  
 
@@ -16,3 +17,4 @@ password : lorem
 
 [200KB JPG file](https://nicopowa.github.io/urlock/test.html)  
 password : test
+
