@@ -18,3 +18,6 @@ password : lorem
 [200KB JPG file](https://nicopowa.github.io/urlock/test.html)  
 password : test
 
+## Links
+
+- [IETF URL Fragment](https://datatracker.ietf.org/doc/html/rfc3986#section-3.5)

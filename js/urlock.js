@@ -305,7 +305,7 @@ class URLock {
 			
 				});
 
-				if(navigator.share) {
+				try {
 
 					const dsc = this.ui.ttl.value || "URLock";
 
@@ -319,7 +319,7 @@ class URLock {
 					this.info("shared");
 
 				}
-				else {
+				catch(err) {
 
 					await navigator.clipboard.write([new ClipboardItem({
 						[this.blb.type]: prm.then(u =>
