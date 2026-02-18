@@ -5,10 +5,16 @@
 - Share encrypted data via url hash
 - Nothing is ever sent to server
 - Password not stored anywhere
-- Lightweight : 5KB JS + 1.5KB CSS
-- 500KB url hash maximum size (?)
+- Lightweight : 5KB JS + 1.5KB CSS  
 
 [DEMO](https://nicopowa.github.io/urlock)  
+
+## Data
+
+Input -> GZIP compression -> AES encryption -> B64 encoding -> Share  
+
+Chromium based browsers enforce a 512KB hard limit when pasting text into the address bar, URL-safe Base64 increases size by 33%, 512KB / 1.33 ≈ 393KB raw binary capacity. If compressed data size is over 393KB, output size will exceed 512KB, get truncated upon pasting, and fail to decrypt.  
+
 
 ## Tests
 

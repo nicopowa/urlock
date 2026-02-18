@@ -1,29 +1,30 @@
 :root {
 	--bg: #fff;
-	--fg: #000;
+	--fg: #333;
 	--bd: #b9b9b9;
 	--ov: #e7e7e7;
-	--ph: #666;
-	--gp: .4rem;
+	--ph: #a0a0a0;
+	--gp: 0.4rem;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--bg: #000;
-		--fg: #aaa;
-		--bd: #333;
+		--bg: #0d1117;
+		--fg: #898989;
+		--bd: #555;
 		--ov: #252525;
-		--ph: #4a4a4a;
+		--ph: #636363;
 	}
 }
 
-html {
+html,
+body {
+	margin: 0;
+	padding: 0;
 	height: 100%;
 }
 
 body {
-	margin: 0;
-	padding: 0;
 	font-family: "Courier New", monospace;
 	background: var(--bg);
 	color: var(--fg);
@@ -47,7 +48,7 @@ main {
 
 header {
 	display: flex;
-	gap: .5rem;
+	gap: 0.5rem;
 	align-items: center;
 }
 
@@ -99,85 +100,59 @@ textarea::placeholder {
 button,
 label {
 	cursor: pointer;
-	text-align: center;
 }
 
 #txt {
-	width: 100%;
-	height: 100%;
-	flex: 1;
 	resize: none;
-	display: none;
 }
 
+#txt,
 #box {
 	width: 100%;
 	height: 100%;
 	flex: 1;
-	display: none;
+}
+
+#box {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	gap: var(--gp);
 }
 
-#nfo {
-	text-align: center;
+#nnm {
+	font-size: 1.5rem;
 }
 
-#fin {
+#lbl {
 	display: none;
 }
 
-/* ENCRYPT */
-main.enc #txt {
-	display: block;
-}
-
-main.enc #lbl {
-	display: block;
-}
-
-main.enc.bin #txt {
-	display: none;
-}
-
-main.enc.bin #box {
-	display: flex;
-}
-
-/* DECRYPT */
-main.dec #ttl {
-	border: none;
-	font-size: 1.3rem;
-}
-
-main.dec #ttl:placeholder-shown {
-	display: none;
-}
-
-main.dec #txt,
-main.dec #box {
-	display: none;
-}
-
-main.dec #lbl {
-	display: none !important;
-}
-
-/* DECRYPTED */
+main.enc #txt,
+main.enc #lbl,
 main.dec.res #txt {
 	display: block;
 }
 
-main.dec.res #row {
-	display: none;
-}
-
+#txt,
+#fin,
+#box,
+main.enc.bin #txt,
+main.dec #ttl:placeholder-shown,
+main.dec #txt,
+main.dec #box,
+main.dec #lbl,
+main.dec.res #row,
 main.dec.res.bin #txt {
 	display: none;
 }
 
+main.enc.bin #box,
 main.dec.res.bin #box {
 	display: flex;
+}
+
+main.dec #ttl {
+	border: none;
+	font-size: 1.3rem;
 }

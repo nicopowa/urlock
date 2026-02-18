@@ -9,7 +9,8 @@ class URLock {
 			btn: "btn",
 			ttl: "ttl",
 			txt: "txt",
-			nfo: "nfo",
+			nnm: "nnm",
+			siz: "siz",
 			act: "act",
 			fin: "fin"
 		})
@@ -118,13 +119,19 @@ class URLock {
 		this.ui.wrp.classList.add("bin");
 		const s = this.bin.siz || this.bin.dat.length;
 
-		this.ui.nfo.innerText = `${this.bin.nnm}\n${s > 1048576 ? (s / 1048576).toFixed(2) + "MB" : (s / 1024).toFixed(2) + "KB"}`;
+		this.ui.nnm.innerText = this.bin.nnm;
+		this.ui.siz.innerText = s > 1048576 ? (s / 1048576).toFixed(2) + "MB" : (s / 1024).toFixed(2) + "KB";
         
 		this.ui.act.innerText = this.dec ? "download" : "clear";
         
 		this.ui.act.onclick = this.dec ? () => {
 
-			const u = URL.createObjectURL(new Blob([this.bin.dat]));
+			const u = URL.createObjectURL(new Blob(
+				[this.bin.dat],
+				{
+					type: "application/octet-stream"
+				}
+			));
 			const a = document.createElement("a");
 
 			a.href = u;
