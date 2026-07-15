@@ -6,6 +6,8 @@ class URLock {
 			wrp: "wrp",
 			row: "row",
 			pwd: "pwd",
+			cwd: "cwd",
+			rev: "rev",
 			btn: "btn",
 			ttl: "ttl",
 			txt: "txt",
@@ -56,6 +58,24 @@ class URLock {
 				e.key === "Enter" && this.run()
 		);
 
+		this.ui.rev.addEventListener(
+			"click",
+			() =>
+				[this.ui.rev, this.ui.pwd].forEach(el =>
+					el.classList.toggle("show"))
+		);
+
+		this.ui.cwd.addEventListener(
+			"click",
+			() =>
+				navigator.clipboard.writeText(this.ui.pwd.value)
+				.then(() =>
+					this.info(
+						"copied",
+						this.ui.cwd
+					))
+		);
+
 		if(this.dec) {
 
 			const spl = hsh.split(/\||%7C/);
@@ -97,12 +117,11 @@ class URLock {
 
 		const rdr = new FileReader();
 
-		rdr.onload = e => {
+		rdr.onload = () => {
 
 			this.bin = {
 				nnm: f.name,
-				//dat: new Uint8Array(e.target.result),
-				dat: new Uint8Array(rdr.result),
+				dat: new Uint8Array(/** @type {!ArrayBuffer} */ (rdr.result)),
 				siz: f.size
 			};
 
@@ -149,200 +168,28 @@ class URLock {
 	
 	}
 
-	info(str) {
+	info(str, elt = this.ui.btn) {
 
 		clearTimeout(this.timed);
-		const prev = this.ui.btn.innerText;
+		const prev = elt.innerText;
 
-		this.ui.btn.innerText = str;
+		elt.innerText = str;
 		this.timed = setTimeout(
 			() =>
-				this.ui.btn.innerText = prev,
+				elt.innerText = prev,
 			2345
 		);
 
 	}
 
 	async run() {
-
-		if((!this.dec && !this.bin && !this.ui.txt.reportValidity()) || !this.ui.pwd.reportValidity())
-			return;
-
-		const pwd = this.ui.pwd.value;
         
 		try {
 
-			if(this.dec) {
-
-				// Decrypt
-				const bytes = Uint8Array.fromBase64(
-					this.dat,
-					this.b64
-				);
-				const slt = bytes.slice(
-					0,
-					16
-				);
-				const ivc = bytes.slice(
-					16,
-					28
-				);
-				const enc = bytes.slice(28);
-
-				const key = await this.derive(
-					pwd,
-					slt
-				);
-				const dec = await crypto.subtle.decrypt(
-					{
-						name: "AES-GCM",
-						iv: ivc
-					},
-					key,
-					enc
-				);
-				const raw = await this.gzip(
-					dec,
-					DecompressionStream
-				);
-
-				// Check Magic: \0F\0
-				if(raw[0] === 0 && raw[1] === 70 && raw[2] === 0) {
-
-					const nl = raw.indexOf(10);
-
-					if(nl > -1) {
-
-						this.bin = {
-							nnm: new TextDecoder()
-							.decode(raw.slice(
-								3,
-								nl
-							)),
-							dat: raw.slice(nl + 1)
-						};
-						
-						this.renderFile();
-					
-					}
-				
-				}
-				else {
-
-					this.ui.txt.value = new TextDecoder()
-					.decode(raw);
-				
-				}
-
-				this.ui.wrp.classList.add("res");
-
-				this.ui.pwd.value = "";
-
-			}
-			else {
-
-				// Encrypt
-				let dat;
-
-				if(this.bin) {
-
-					const hds = new TextEncoder()
-					.encode(`\0F\0${this.bin.nnm}\n`);
-
-					dat = new Uint8Array(hds.length + this.bin.dat.length);
-
-					dat.set(
-						hds,
-						0
-					);
-
-					dat.set(
-						this.bin.dat,
-						hds.length
-					);
-				
-				}
-				else {
-
-					dat = new TextEncoder()
-					.encode(this.ui.txt.value);
-				
-				}
-
-				const slt = crypto.getRandomValues(new Uint8Array(16));
-				const ivc = crypto.getRandomValues(new Uint8Array(12));
-
-				const prm = Promise.all([
-					this.gzip(
-						dat,
-						CompressionStream
-					),
-					this.derive(
-						pwd,
-						slt
-					)
-				])
-				.then(([z, k]) =>
-					crypto.subtle.encrypt(
-						{
-							name: "AES-GCM",
-							iv: ivc
-						},
-						k,
-						z
-					))
-				.then(enc => {
-
-					const pck = new Uint8Array(28 + enc.byteLength);
-
-					pck.set(
-						slt,
-						0
-					);
-					pck.set(
-						ivc,
-						16
-					);
-					pck.set(
-						new Uint8Array(enc),
-						28
-					);
-
-					return `${location.origin}${location.pathname}#${encodeURIComponent(this.ui.ttl.value)}|${pck.toBase64(this.b64)}`;
-			
-				});
-
-				try {
-
-					const dsc = this.ui.ttl.value || "URLock";
-
-					await navigator
-					.share({
-						title: dsc,
-						//text: dsc,
-						url: await prm
-					});
-
-					this.info("shared");
-
-				}
-				catch(err) {
-
-					await navigator.clipboard.write([new ClipboardItem({
-						[this.blb.type]: prm.then(u =>
-							new Blob(
-								[u],
-								this.blb
-							))
-					})]);
-
-					await prm;
-                
-					this.info("copied");
-					
-				}
-			
-			}
+			if(this.dec)
+				await this.decryptIt();
+			else
+				await this.encryptIt();
 		
 		}
 		catch(err) {
@@ -352,6 +199,196 @@ class URLock {
 		
 		}
 	
+	}
+
+	async encryptIt() {
+
+		if(!this.bin && !this.ui.txt.reportValidity())
+			return;
+
+		const passwd = this.ui.pwd;
+
+		if(!passwd.value) {
+
+			passwd.value = Passwd.generate();
+			this.ui.cwd.classList.add("show");
+		
+		}
+
+		const pwd = this.ui.pwd.value;
+
+		let dat;
+
+		if(this.bin) {
+
+			const hds = new TextEncoder()
+			.encode(`\0F\0${this.bin.nnm}\n`);
+
+			dat = new Uint8Array(hds.length + this.bin.dat.length);
+
+			dat.set(
+				hds,
+				0
+			);
+
+			dat.set(
+				this.bin.dat,
+				hds.length
+			);
+				
+		}
+		else {
+
+			dat = new TextEncoder()
+			.encode(this.ui.txt.value);
+				
+		}
+
+		const slt = crypto.getRandomValues(new Uint8Array(16));
+		const ivc = crypto.getRandomValues(new Uint8Array(12));
+
+		const prm = Promise.all([
+			this.gzip(
+				dat,
+				CompressionStream
+			),
+			this.derive(
+				pwd,
+				slt
+			)
+		])
+		.then(([z, k]) =>
+			crypto.subtle.encrypt(
+				{
+					name: "AES-GCM",
+					iv: ivc
+				},
+				k,
+				z
+			))
+		.then(enc => {
+
+			const pck = new Uint8Array(28 + enc.byteLength);
+
+			pck.set(
+				slt,
+				0
+			);
+			pck.set(
+				ivc,
+				16
+			);
+			pck.set(
+				new Uint8Array(enc),
+				28
+			);
+
+			return `${location.origin}${location.pathname}#${encodeURIComponent(this.ui.ttl.value)}|${pck.toBase64(this.b64)}`;
+			
+		});
+
+		try {
+
+			const dsc = this.ui.ttl.value || "URLock";
+
+			await navigator
+			.share({
+				title: dsc,
+				//text: dsc,
+				url: await prm
+			});
+
+			this.info("shared");
+
+		}
+		catch(err) {
+
+			await navigator.clipboard.write([new ClipboardItem({
+				[this.blb.type]: prm.then(u =>
+					new Blob(
+						[u],
+						this.blb
+					))
+			})]);
+
+			await prm;
+                
+			this.info("copied");
+					
+		}
+
+	}
+
+	async decryptIt() {
+
+		if(!this.ui.pwd.reportValidity())
+			return;
+
+		const pwd = this.ui.pwd.value;
+
+		const bytes = Uint8Array.fromBase64(
+			this.dat,
+			this.b64
+		);
+		const slt = bytes.slice(
+			0,
+			16
+		);
+		const ivc = bytes.slice(
+			16,
+			28
+		);
+		const enc = bytes.slice(28);
+
+		const key = await this.derive(
+			pwd,
+			slt
+		);
+		const dec = await crypto.subtle.decrypt(
+			{
+				name: "AES-GCM",
+				iv: ivc
+			},
+			key,
+			enc
+		);
+		const raw = await this.gzip(
+			dec,
+			DecompressionStream
+		);
+
+		// Check Magic: \0F\0
+		if(raw[0] === 0 && raw[1] === 70 && raw[2] === 0) {
+
+			const nl = raw.indexOf(10);
+
+			if(nl > -1) {
+
+				this.bin = {
+					nnm: new TextDecoder()
+					.decode(raw.slice(
+						3,
+						nl
+					)),
+					dat: raw.slice(nl + 1)
+				};
+						
+				this.renderFile();
+					
+			}
+				
+		}
+		else {
+
+			this.ui.txt.value = new TextDecoder()
+			.decode(raw);
+				
+		}
+
+		this.ui.wrp.classList.add("res");
+
+		this.ui.pwd.value = "";
+
 	}
 
 	async derive(pwd, slt) {
@@ -381,10 +418,12 @@ class URLock {
 	
 	}
 
-	async gzip(dat, ops) {
+	gzip(dat, ops) {
 
-		return new Uint8Array(await new Response(new Response(dat).body.pipeThrough(new ops("gzip")))
-		.arrayBuffer());
+		return new Response(new Response(dat).body.pipeThrough(new ops("gzip")))
+		.arrayBuffer()
+		.then(res =>
+			new Uint8Array(res));
 	
 	}
 
