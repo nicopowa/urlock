@@ -13,21 +13,24 @@
 	<body>
 		<main id="wrp" class="lck">
 			<header>
-				<div id="tit"></div>
 				<div id="urlock">urlock</div>
-				<a id="git" ref="https://github.com/nicopowa/urlock" target="_blank"></a>
+				<div id="tit"></div>
+				<a id="git" href="https://github.com/nicopowa/urlock" target="_blank"> </a>
 			</header>
+
 			<input id="ttl" type="text" placeholder="title (optional, not encrypted)" />
 			<textarea id="txt" placeholder="text" required></textarea>
+
 			<div id="box">
+				<label id="lbl" for="fin">click to browse or drop files</label>
 				<div id="bar">
-					<label id="lbl" for="fin">browse</label>
 					<input id="fin" type="file" />
 					<div id="siz"></div>
 					<button id="act"></button>
 				</div>
 				<div id="nnm"></div>
 			</div>
+
 			<div id="row">
 				<div id="grp">
 					<input id="pwd" type="text" placeholder="password" required autocapitalize="off" autocomplete="off" />
