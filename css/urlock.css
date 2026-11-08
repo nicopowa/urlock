@@ -2,91 +2,44 @@
 	--bg: #fff;
 	--fg: #333;
 	--bd: #b9b9b9;
-	--ov: #e7e7e7;
 	--ph: #a0a0a0;
-	--gp: 0.4rem;
+	--gp: 0.43rem;
 }
-
 @media (prefers-color-scheme: dark) {
 	:root {
 		--bg: #0d1117;
 		--fg: #898989;
 		--bd: #555;
-		--ov: #252525;
 		--ph: #636363;
 	}
 }
-
+* {
+	box-sizing: border-box;
+}
 html,
 body {
+	width: 100%;
+	height: 100%;
 	margin: 0;
 	padding: 0;
-	height: 100%;
 }
-
 body {
+	min-height: 100%;
 	font-family: "Courier New", monospace;
 	background: var(--bg);
 	color: var(--fg);
-	min-height: 100%;
 	display: flex;
 	flex-direction: column;
-	overflow: hidden;
-}
-
-main {
-	width: 96%;
-	max-width: 720px;
-	max-height: 480px;
-	margin: 0 auto;
-	padding: var(--gp);
-	display: flex;
-	flex-direction: column;
-	gap: var(--gp);
-	flex: 1;
-}
-
-header {
-	display: flex;
-	gap: 0.5rem;
 	align-items: center;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
+	font-size: 1.1rem;
 }
-
-#urlock {
-	font-size: 1.6rem;
-	pointer-events: none;
-}
-
-#git {
-	width: 1.3rem;
-	height: 1.3rem;
-	background: center / contain no-repeat
-		url("data:image/svg+xml,%3Csvg%20width%3D%2298%22%20height%3D%2298%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M48.854%200C21.839%200%200%2022%200%2049.217c0%2021.756%2013.993%2040.172%2033.405%2046.69%202.427.49%203.316-1.059%203.316-2.362%200-1.141-.08-5.052-.08-9.127-13.59%202.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015%204.934.326%207.523%205.052%207.523%205.052%204.367%207.496%2011.404%205.378%2014.235%204.074.404-3.178%201.699-5.378%203.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283%200-5.378%201.94-9.778%205.014-13.2-.485-1.222-2.184-6.275.486-13.038%200%200%204.125-1.304%2013.426%205.052a47%2047%200%200%201%2012.214-1.63c4.125%200%208.33.571%2012.213%201.63%209.302-6.356%2013.427-5.052%2013.427-5.052%202.67%206.763.97%2011.816.485%2013.038%203.155%203.422%205.015%207.822%205.015%2013.2%200%2018.905-11.404%2023.06-22.324%2024.283%201.78%201.548%203.316%204.481%203.316%209.126%200%206.6-.08%2011.897-.08%2013.526%200%201.304.89%202.853%203.316%202.364%2019.412-6.52%2033.405-24.935%2033.405-46.691C97.707%2022%2075.788%200%2048.854%200%22%20fill%3D%22%2324292f%22%2F%3E%3C%2Fsvg%3E");
-}
-
-#spc {
-	flex-grow: 1;
-}
-
-#row {
-	display: flex;
-	gap: var(--gp);
-}
-
-#cwd {
-	display: none;
-}
-
-#cwd.show {
-	display: block;
-}
-
 input,
 #txt,
 button,
 #lbl,
 #box {
-	box-sizing: border-box;
 	font: inherit;
 	background: inherit;
 	color: inherit;
@@ -95,101 +48,212 @@ button,
 	padding: var(--gp);
 	border-radius: 0;
 }
-
 input::placeholder,
-textarea::placeholder {
+#txt::placeholder {
 	color: var(--ph);
 }
-
-#grp {
-	flex: 1;
-	position: relative;
-	display: flex;
-	align-items: center;
-}
-
-#pwd {
-	flex: 1;
-	padding-right: 2.2rem;
-	-webkit-text-security: disc;
-}
-
-#pwd.show {
-	-webkit-text-security: none;
-}
-
-#rev {
-	position: absolute;
-	right: 8px;
-	width: 1.3rem;
-	height: 1.3rem;
-	cursor: pointer;
-	mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M2.062%2012.348a1%201%200%200%201%200-.696%2010.75%2010.75%200%200%201%2019.876%200%201%201%200%200%201%200%20.696%2010.75%2010.75%200%200%201-19.876%200%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%223%22%2F%3E%3C%2Fsvg%3E");
-	mask-repeat: no-repeat;
-	mask-size: contain;
-	background: var(--bd);
-}
-
-#rev.show {
-	background: var(--fg);
-}
-
 button,
 label {
 	cursor: pointer;
 }
-
-#txt {
-	resize: none;
+#fin {
+	display: none;
 }
 
-#txt,
-#box {
-	width: 100%;
-	height: 100%;
+main {
 	flex: 1;
-}
-
-#box {
+	width: 100%;
+	max-width: 720px;
+	max-height: 640px;
+	padding: var(--gp);
+	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
 	gap: var(--gp);
 }
 
-#nnm {
+/* HEADER */
+header {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	justify-content: space-between;
+}
+#urlock,
+a {
+	flex-shrink: 0;
+}
+#urlock {
 	font-size: 1.5rem;
+	pointer-events: none;
+}
+#tit {
+	display: none;
+	font-size: 1.3rem;
+	flex: 1;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+#git {
+	width: 1.4rem;
+	height: 1.4rem;
+	background: center / contain no-repeat
+		url("data:image/svg+xml,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M8%200C3.58%200%200%203.58%200%208c0%203.54%202.29%206.53%205.47%207.59.4.07.55-.17.55-.38%200-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01%201.08.58%201.23.82.72%201.21%201.87.87%202.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95%200-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12%200%200%20.67-.21%202.2.82.64-.18%201.32-.27%202-.27s1.36.09%202%20.27c1.53-1.04%202.2-.82%202.2-.82.44%201.1.16%201.92.08%202.12.51.56.82%201.27.82%202.15%200%203.07-1.87%203.75-3.65%203.95.29.25.54.73.54%201.48%200%201.07-.01%201.93-.01%202.2%200%20.21.15.46.55.38A8.01%208.01%200%200%200%2016%208c0-4.42-3.58-8-8-8%22%20fill%3D%22%23757575%22%2F%3E%3C%2Fsvg%3E");
 }
 
+/* TEXT */
+#txt {
+	flex: 1;
+	resize: none;
+}
+
+/* FILES */
+#box {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gp);
+	position: relative;
+	height: 120px;
+}
+#box:has(#nnm:empty) {
+	border-style: dashed;
+}
 #lbl {
 	display: none;
 }
-
-main.enc #txt,
-main.enc #lbl,
-main.dec.res #txt {
-	display: block;
+#box:has(#nnm:empty) #lbl {
+	display: flex;
+	position: absolute;
+	inset: 0;
+	align-items: center;
+	justify-content: center;
+	color: var(--ph);
+	border: none;
+}
+#bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--gp);
+}
+#nnm {
+	flex: 1;
+	overflow-y: auto;
+}
+#nnm > div {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+#siz {
+	flex: 1;
 }
 
-#txt,
-#fin,
-#box,
-main.enc.bin #txt,
-main.dec #ttl:placeholder-shown,
-main.dec #txt,
-main.dec #box,
-main.dec #lbl,
-main.dec.res #row,
-main.dec.res.bin #txt {
+/* FOOTER */
+#row {
+	display: flex;
+	gap: var(--gp);
+}
+#btn {
+	min-width: 8ch;
+}
+
+/* PASSWORD */
+#grp {
+	position: relative;
+	display: flex;
+	align-items: center;
+	flex: 1;
+	gap: var(--gp);
+}
+#pwd {
+	flex: 1;
+}
+#pwd:not(.show) {
+	-webkit-text-security: disc;
+}
+#psd {
+	position: absolute;
+	right: 0.5rem;
+	display: flex;
+	gap: 0.6rem;
+	align-items: center;
+}
+#rev,
+#cwd {
+	width: 1.3rem;
+	height: 1.3rem;
+	background: var(--bd);
+	cursor: pointer;
+}
+#rev {
+	mask: center / contain no-repeat
+		url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M2.062%2012.348a1%201%200%200%201%200-.696%2010.75%2010.75%200%200%201%2019.876%200%201%201%200%200%201%200%20.696%2010.75%2010.75%200%200%201-19.876%200%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%223%22%2F%3E%3C%2Fsvg%3E");
+}
+#rev.show {
+	background: var(--fg);
+}
+#cwd {
+	mask: center / contain no-repeat
+		url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20x%3D%228%22%20y%3D%228%22%20rx%3D%222%22%20ry%3D%222%22%2F%3E%3Cpath%20d%3D%22M4%2016c-1.1%200-2-.9-2-2V4c0-1.1.9-2%202-2h10c1.1%200%202%20.9%202%202%22%2F%3E%3C%2Fsvg%3E");
+}
+
+/* STATES */
+main.lck {
 	display: none;
 }
-
-main.enc.bin #box,
-main.dec.res.bin #box {
-	display: flex;
+main.enc:not(.bin) #act,
+main.enc:not(.bin) #siz {
+	display: none;
+}
+main.enc #act::before {
+	content: "clear";
 }
 
-main.dec #ttl {
-	border: none;
-	font-size: 1.3rem;
+main.dec:not(.res) #txt,
+main.dec:not(.res) #box {
+	display: none;
+}
+main.dec #tit {
+	display: block;
+}
+main.dec #ttl,
+main.dec #cwd,
+main.dec #lbl {
+	display: none !important;
+}
+
+main.dec.res #row,
+main.dec.res:not(.bin) #box,
+main.dec.res.bin #txt:placeholder-shown {
+	display: none;
+}
+main.dec.res.bin #act::before {
+	content: "save";
+}
+main.dec.res.bin #nnm > div {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+/* SCROLL */
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+	background-color: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+	width: 4px;
+	background-color: var(--bd);
+}
+
+::-webkit-scrollbar-button {
+	display: none;
+	width: 0;
+	height: 0;
+}
+
+::-webkit-scrollbar-corner {
+	background-color: transparent;
 }

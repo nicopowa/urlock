@@ -16,28 +16,33 @@
 	</head>
 
 	<body>
-		<main id="wrp">
+		<main id="wrp" class="lck">
 			<header>
 				<div id="urlock">urlock</div>
-				<a href="https://github.com/nicopowa/urlock" target="_blank">
-					<div id="git"></div>
-				</a>
-				<div id="spc"></div>
-				<label id="lbl" for="fin">browse</label>
-				<input type="file" id="fin" />
+				<div id="tit"></div>
+				<a id="git" href="https://github.com/nicopowa/urlock" target="_blank"> </a>
 			</header>
-			<input id="ttl" type="text" placeholder="title (not encrypted)" />
-			<textarea id="txt" placeholder="type text or drop file" required></textarea>
+
+			<input id="ttl" type="text" placeholder="title (optional, not encrypted)" />
+			<textarea id="txt" placeholder="text" required></textarea>
+
 			<div id="box">
+				<label id="lbl" for="fin">click to browse or drop files</label>
+				<div id="bar">
+					<input id="fin" type="file" />
+					<div id="siz"></div>
+					<button id="act"></button>
+				</div>
 				<div id="nnm"></div>
-				<div id="siz"></div>
-				<button id="act"></button>
 			</div>
+
 			<div id="row">
-				<button id="cwd">copy</button>
 				<div id="grp">
 					<input id="pwd" type="text" placeholder="password" required autocapitalize="off" autocomplete="off" />
-					<div id="rev"></div>
+					<div id="psd">
+						<div id="rev"></div>
+						<div id="cwd"></div>
+					</div>
 				</div>
 				<button id="btn"></button>
 			</div>

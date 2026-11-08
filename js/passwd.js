@@ -1,84 +1,63 @@
 class Passwd {
 
-	static LENGTH = 13;
-
-	static NUMBERS = "2346789";
-
-	static LETTERS = "ABCDEFGHJKLMNPQRTUVWXYabcdefghijkmnpqrtwxyz";
-
-	static ALPHANUM = Passwd.LETTERS + Passwd.NUMBERS;
-
-	static SPECIALS = "!@#$%&*()_+-";
-
-	static FORCE_NUMBERS = 2;
-
-	static FORCE_SPECIAL = 1;
-
-	static rand(len) {
-
-		return crypto.getRandomValues(new Uint32Array(len));
-	
-	}
-
-	static pick(alphabet, count) {
+	static pick(chars, count) {
 
 		let out = "";
-		const mask = (2 << Math.floor(Math.log2(alphabet.length - 1))) - 1;
-		const step = Math.ceil(1.6 * mask * count / alphabet.length);
+		const bytes = new Uint8Array(count * 2);
 
 		while(out.length < count) {
 
-			const bytes = Passwd.rand(step);
+			crypto.getRandomValues(bytes);
 
-			for(let i = 0; i < step && out.length < count; i++) {
+			for(const b of bytes) {
 
-				const ch = alphabet[bytes[i] & mask];
+				if(b < 256 - (256 % chars.length)) {
 
-				if(ch)
-					out += ch;
-			
+					out += chars[b % chars.length];
+
+					if(out.length === count)
+						break;
+
+				}
+
 			}
-		
+
 		}
 
 		return out;
-	
-	}
 
-	static shuffle(arr) {
-
-		const r = Passwd.rand(arr.length);
-
-		for(let i = arr.length - 1; i > 0; i--) {
-
-			const j = Math.floor(r[i] / 4294967296 * (i + 1));
-
-			[arr[i], arr[j]] = [arr[j], arr[i]];
-		
-		}
-
-		return arr;
-	
 	}
 
 	static generate() {
 
-		return Passwd.shuffle([
+		const num = "2346789";
+		const chars = [
 			...Passwd.pick(
-				Passwd.SPECIALS,
-				Passwd.FORCE_SPECIAL
+				"!@#$%&*()_+-",
+				2
 			),
 			...Passwd.pick(
-				Passwd.NUMBERS,
-				Passwd.FORCE_NUMBERS
+				num,
+				3
 			),
 			...Passwd.pick(
-				Passwd.ALPHANUM,
-				Passwd.LENGTH - Passwd.FORCE_NUMBERS - Passwd.FORCE_SPECIAL
+				"ABCDEFGHJKLMNPQRTUVWXYabcdefghijkmnpqrtwxyz" + num,
+				9
 			)
-		])
-		.join("");
-	
+		];
+
+		const rand = crypto.getRandomValues(new Uint32Array(chars.length));
+
+		for(let i = chars.length - 1; i > 0; i--) {
+
+			const j = Number(rand[i]) % (i + 1);
+
+			[chars[i], chars[j]] = [chars[j], chars[i]];
+
+		}
+
+		return chars.join("");
+
 	}
 
 }

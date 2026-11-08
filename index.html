@@ -5,34 +5,36 @@
 		<title>urlock</title>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<meta name="viewport" content="initial-scale=1, user-scalable=no, maximum-scale=1, width=device-width, height=device-height" />
-		<link rel="icon" type="image/png" href="icon.png">
+		<link rel="icon" type="image/png" href="icon.png" />
 		<link rel="stylesheet" href="css/urlock.package.min.css" />
 		<script src="js/urlock.package.release.min.js"></script>
 	</head>
 
 	<body>
-		<main id="wrp">
+		<main id="wrp" class="lck">
 			<header>
+				<div id="tit"></div>
 				<div id="urlock">urlock</div>
-				<a href="https://github.com/nicopowa/urlock" target="_blank">
-					<div id="git"></div>
-				</a>
-				<div id="spc"></div>
-				<label id="lbl" for="fin">browse</label>
-				<input type="file" id="fin" />
+				<a id="git" ref="https://github.com/nicopowa/urlock" target="_blank"></a>
 			</header>
-			<input id="ttl" type="text" placeholder="title (not encrypted)" />
-			<textarea id="txt" placeholder="type text or drop file" required></textarea>
+			<input id="ttl" type="text" placeholder="title (optional, not encrypted)" />
+			<textarea id="txt" placeholder="text" required></textarea>
 			<div id="box">
+				<div id="bar">
+					<label id="lbl" for="fin">browse</label>
+					<input id="fin" type="file" />
+					<div id="siz"></div>
+					<button id="act"></button>
+				</div>
 				<div id="nnm"></div>
-				<div id="siz"></div>
-				<button id="act"></button>
 			</div>
 			<div id="row">
-				<button id="cwd">copy</button>
 				<div id="grp">
 					<input id="pwd" type="text" placeholder="password" required autocapitalize="off" autocomplete="off" />
-					<div id="rev"></div>
+					<div id="psd">
+						<div id="rev"></div>
+						<div id="cwd"></div>
+					</div>
 				</div>
 				<button id="btn"></button>
 			</div>

@@ -26,39 +26,37 @@
 
 			while(str.length % 4)
 				str += "=";
+			const bin = atob(str);
 
-			const binary = atob(str);
-			const bytes = new Uint8Array(binary.length);
-
-			for(let i = 0; i < binary.length; i++) {
-
-				bytes[i] = binary.charCodeAt(i);
-			
-			}
-
-			return bytes;
-
+			return Uint8Array.from(
+				bin,
+				c =>
+					c.charCodeAt(0)
+			);
+		
 		};
-
+	
 	}
 
 	if(!Uint8Array.prototype.toBase64) {
 
 		Uint8Array.prototype.toBase64 = function(options = {}) {
 
-			let binary = "";
+			let bin = "";
 
-			for(let i = 0; i < this.length; i++) {
+			for(let i = 0; i < this.length; i += 8192) {
 
-				binary += String.fromCharCode(this[i]);
+				bin += String.fromCharCode(...this.subarray(
+					i,
+					i + 8192
+				));
 			
 			}
-
-			let result = btoa(binary);
+			let res = btoa(bin);
 
 			if(options.alphabet === "base64url") {
 
-				result = result.replace(
+				res = res.replace(
 					/\+/g,
 					"-"
 				)
@@ -74,17 +72,17 @@
 			}
 			else if(options.omitPadding) {
 
-				result = result.replace(
+				res = res.replace(
 					/=/g,
 					""
 				);
 			
 			}
 
-			return result;
-
+			return res;
+		
 		};
-
+	
 	}
 
 })();
